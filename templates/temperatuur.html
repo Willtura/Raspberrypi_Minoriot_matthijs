@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv=refresh content="120">
+    <title>Temperatuur ESP32</title>
+    <style>
+        /* Reset de standaardmarges en padding van de pagina */
+        body, h1, p {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .graphs{
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            justify-content: center;
+
+        }
+        /* Stijl de navigatiebalk (navbar) */
+        .navbar {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+        .navbar .btn {
+            position: absolute; /* Voeg deze regel toe */
+            top: 0px; /* Aanpassing aan de gewenste verticale positie */
+            right: 0px; /* Aanpassing aan de gewenste horizontale positie */
+            background-color: #333;
+            color: white;
+            padding: 19px 20px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            border-radius: 0px;
+            cursor: pointer;
+        }
+        .navbar .btn:hover {
+            background-color: #101110;
+        }
+        @media (max-width: 600px) {
+            .navbar .btn {
+                font-size:10px;
+                position:relative;
+                padding: 10px 30px;
+            }
+        }
+
+        /* Stijl de widget-container */
+        .widget-container {
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 20px;
+            min-height: calc(5vh - 80px); /* 80px is de hoogte van de navbar en footer */
+        }
+
+        /* Stijl de temperatuurwidget */
+        .temperature-widget {
+            background-color: #3498db;
+            color: white;
+            border-radius: 10px;
+            padding:20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+        }
+        
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 20px;
+            position: relative; /* Voor positionering van de labels */
+        }
+
+        .progress-bar_temperature {
+            width: calc({{datalatest[0][1]}}*2%); /* Breedte gebaseerd op de temperatuurwaarde */
+            height: 20px;
+            background-color: red;
+            border-radius: 5px;
+            transition: width 1s; /* Voeg een overgangseffect toe */
+        }
+        .progress-bar_humidity{
+            width: calc({{datalatest[0][2]}}%); /* Breedte gebaseerd op de temperatuurwaarde */
+            height: 20px;
+            background-color: blue;
+            border-radius: 5px;
+            transition: width 1s; /* Voeg een overgangseffect toe */
+        }
+        .progress-bar_pressure{
+            width: calc(({{datalatest[0][3]}} - 950) / (1050 - 950) * 100%); /* Breedte gebaseerd op de temperatuurwaarde */
+            height: 20px;
+            background-color: green;
+            border-radius: 5px;
+            transition: width 1s; /* Voeg een overgangseffect toe */
+        }
+        
+
+        /* Onderschrift van 0 graden aan de linkerkant */
+        .temperature-label-left {
+            position: absolute;
+            left: 0;
+            top: 25px;
+            text-align: left;
+        }
+
+        /* Onderschrift van 50 graden aan de rechterkant */
+        .temperature-label-right {
+            position: absolute;
+            right: 0;
+            top: 25px;
+            text-align: right;
+        }
+
+        /* Stijl de footer */
+        .footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigatiebalk (navbar) -->
+    <div class="navbar">
+        <h1>IOT fundamentals</h1>
+        <a class="btn" href="/historical">Historical_data</a>
+    </div>
+
+    <div class="widget-container">
+        <!-- Eerste widget voor temperatuur -->
+        <div class="temperature-widget">
+            <h2>Huidige Temperatuur</h2>
+            <p>{{datalatest[0][1]}} °C</p>
+        </div>
+
+        <!-- Vullende balk (progress bar) -->
+        <div class="progress-bar-container">
+            <div class="progress-bar_temperature"></div>
+            <div class="temperature-label-left">0°C</div>
+            <div class="temperature-label-right">50°C</div>
+        </div>
+    </div>
+
+    <div class="widget-container">
+        <!-- Tweede widget voor luchtvochtigheid -->
+        <div class="temperature-widget">
+            <h2>Huidige Luchtvochtigheid</h2>
+            <p>{{datalatest[0][2]}} %</p>
+        </div>
+
+        <!-- Vullende balk (progress bar) -->
+        <div class="progress-bar-container">
+            <div class="progress-bar_humidity"></div>
+            <div class="temperature-label-left">0%</div>
+            <div class="temperature-label-right">100%</div>
+        </div>
+    </div>
+    <div class="widget-container">
+        <!-- Tweede widget voor luchtvochtigheid -->
+        <div class="temperature-widget">
+            <h2>Huidige luchtdruk</h2>
+            <p>{{datalatest[0][3]}} hpa</p>
+        </div>
+
+        <!-- Vullende balk (progress bar) -->
+        <div class="progress-bar-container">
+            <div class="progress-bar_pressure"></div>
+            <div class="temperature-label-left">0.950 hpa</div>
+            <div class="temperature-label-right">1100 hpa</div>
+        </div>
+    </div>
+    <div class="widget-container">
+        
+        <div class="temperature-widget">
+            
+            <h2>Gaat het regenen?</h2>
+
+            <p>Nee, geen regen.</p>
+            <p>{{Rainprediction}}</p>
+        </div>
+    <div class="widget-container">
+        <h1>Historische Grafieken</h1>
+        <div class="graphs"></div>
+            <!-- De gegenereerde grafiek wordt weergegeven als een afbeelding -->
+            <img src="{{ url_for('static', filename=plots) }}" alt="Gegenereerde Grafiek">
+            <img src="{{ url_for('static', filename=plot1) }}" alt="Gegenereerde Grafiek1">
+            <img src="{{ url_for('static', filename=plot2) }}" alt="Gegenereerde Grafiek2">
+        </div>
+    </div>
+    <!-- Footer -->
+    <div class="footer">
+        &copy; 2021 - IOT fundamentals Matthijs Hooijer
+    </div>
+</body>
+</html>
