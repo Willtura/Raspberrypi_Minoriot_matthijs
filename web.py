@@ -60,6 +60,7 @@ def display_current():
     prepare_plt(historicdata, 2, 'Luchtvochtigheid', 'blue', 0, 100, 'Luchtvochtigheid %', '%','1_'+plotname)
     prepare_plt(historicdata, 3, 'Luchtdruk', 'green', 900, 1100, 'Luchtdruk hPa', 'hPa','2_'+plotname)
     Rainprediction = get_AI_prediction(1,getpredictionData2(1))
+    Rainprediction = str(Rainprediction)[3:-2]
     return render_template('temperatuur.html',datalatest=datalatest, plot1='1_'+plotname,plot2='2_'+plotname,plots=plotname, Rainprediction=Rainprediction)
 
 #functie om met de variabelen een grafiek te plotten

@@ -2,6 +2,7 @@ import urllib.request
 import json
 import os
 import ssl
+from datetime import datetime
 
 def allowSelfSignedHttps(allowed):
     # bypass the server certificate verification on client side
@@ -14,14 +15,17 @@ def get_AI_prediction(aantal,Sensordata):
 
     data_values = [list(row) for row in Sensordata]
     for i in range(aantal):
+        timestamp = data_values[i][4]
+        datetime_object = datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S')
+        date_format = datetime_object.strftime('%Y%m%d')  # Geeft '20231117'
+        time_format = datetime_object.strftime('%H%M')   # Geeft '1030'
+        DD_format = datetime_object.strftime('%d')
         data_values[i][5] = data_values[i][4].split(" ")
         data_values[i][4] = data_values[i][5].pop(1)
         data_values[i][5] = data_values[i][5][0][0:-1]
-        data_values[i][0] = 17
-        # string to int
-        data_values[i][4] = 2053
-        data_values[i][5] = 20231117
-        
+        data_values[i][0] = DD_format
+        data_values[i][4] = time_format
+        data_values[i][5] = date_format
 
 
     print(data_values)
