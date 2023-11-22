@@ -50,7 +50,7 @@ def get_AI_prediction(aantal,Sensordata):
 
     url = 'https://matthijsmachinelearning-azowk.westeurope.inference.ml.azure.com/score'
     # Replace this with the primary/secondary key or AMLToken for the endpoint
-    api_key = '13S5MVEs2wlPWv02TPyGnPNuDTfo7fx0'
+    api_key = ''
     if not api_key:
         raise Exception("A key should be provided to invoke the endpoint")
 
